@@ -12,10 +12,9 @@
     },
     "backend": {
       "root": "server/",
-      "buildCommand": "npm run build",
-      "entrypoint": "dist/server.js",
+      "entrypoint": "src/server.ts",
       "functions": {
-        "dist/server.js": {
+        "src/server.ts": {
           "includeFiles": "assets/**"
         }
       }
