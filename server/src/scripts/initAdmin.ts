@@ -82,8 +82,10 @@ export const initAdmin = async () => {
     console.log('====================================================');
     console.log('[Connecting] Establishing secure connection to database...');
 
-    await mongoose.connect(env.MONGODB_URI);
-    console.log('[Connected] Database connection established.\n');
+    const targetDb = process.env.DB_NAME;
+    const connectOptions: mongoose.ConnectOptions = targetDb ? { dbName: targetDb } : {};
+    const conn = await mongoose.connect(env.MONGODB_URI, connectOptions);
+    console.log(`[Connected] Connected to database: "${conn.connection.name}" on host "${conn.connection.host}"\n`);
 
     let adminName = process.env.ADMIN_NAME;
     let adminEmail = process.env.ADMIN_EMAIL;

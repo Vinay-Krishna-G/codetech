@@ -23,9 +23,11 @@ export const connectDB = async (): Promise<void> => {
 
   // 3. Reuse in-flight connection promise to avoid parallel connections in serverless cold starts
   if (!cachedPromise) {
-    cachedPromise = mongoose.connect(env.MONGODB_URI, {
+    const options: mongoose.ConnectOptions = {
       serverSelectionTimeoutMS: 10000, // 10s timeout for serverless Atlas connection handshakes
-    });
+      ...(process.env.DB_NAME ? { dbName: process.env.DB_NAME } : {}),
+    };
+    cachedPromise = mongoose.connect(env.MONGODB_URI, options);
   }
 
   try {
