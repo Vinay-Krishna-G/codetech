@@ -6,6 +6,8 @@ import {
   QrCode,
   Share2,
   AlertTriangle,
+  AlertCircle,
+  RefreshCw,
   CheckCircle2,
   Printer,
   FileText,
@@ -62,8 +64,8 @@ export const VerificationPage: React.FC = () => {
     } catch {
       setData({
         success: false,
-        status: 'not_found',
-        message: 'Could not connect to the verification registry.',
+        status: 'error',
+        message: 'Could not connect to the verification registry. Please check your network connection.',
       });
     } finally {
       setLoading(false);
@@ -555,6 +557,47 @@ export const VerificationPage: React.FC = () => {
               <span>•</span>
               <a href="tel:+919848925128" className="hover:underline">
                 Contact HR Desk (+91 9848925128)
+              </a>
+            </div>
+          </div>
+        )}
+
+        {/* ERROR / SERVICE UNAVAILABLE STATE */}
+        {(data?.status === 'error' || (!['valid', 'revoked', 'not_found'].includes(data?.status || ''))) && (
+          <div className="rounded-2xl p-8 bg-white dark:bg-neutral-900 border border-neutral-200 dark:border-neutral-800 shadow-xl text-center space-y-6 animate-in fade-in duration-200">
+            <div className="w-16 h-16 rounded-2xl bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 flex items-center justify-center mx-auto">
+              <AlertCircle className="w-8 h-8" />
+            </div>
+
+            <div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white">
+                Verification Service Unavailable
+              </h2>
+              <p className="text-xs text-neutral-600 dark:text-neutral-400 mt-2 max-w-sm mx-auto leading-relaxed">
+                {data?.message || 'Unable to communicate with the verification server. Please check your connection and try again.'}
+              </p>
+            </div>
+
+            <div className="flex items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => certificateId && fetchVerification(certificateId)}
+                className="px-4 py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-semibold shadow-sm transition-colors flex items-center space-x-1.5"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>Retry Verification</span>
+              </button>
+              <Link
+                to="/"
+                className="px-4 py-2.5 border border-neutral-300 dark:border-neutral-700 text-neutral-800 dark:text-neutral-200 rounded-xl text-xs font-semibold hover:bg-neutral-50 dark:hover:bg-neutral-800 transition-colors"
+              >
+                Back to Home
+              </Link>
+            </div>
+
+            <div className="pt-4 border-t border-neutral-200 dark:border-neutral-800 text-xs text-neutral-500 flex items-center justify-center space-x-4">
+              <a href="tel:+919848925128" className="hover:underline">
+                Contact Technical Support (+91 9848925128)
               </a>
             </div>
           </div>

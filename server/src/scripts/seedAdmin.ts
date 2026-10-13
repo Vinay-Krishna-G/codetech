@@ -33,10 +33,7 @@ const seedAdmin = async () => {
       console.log(`[Seed] New administrator created: ${adminEmail}`);
     }
 
-    console.log(`[Seed Success] Default Admin Credentials:`);
-    console.log(`Email:    ${adminEmail}`);
-    console.log(`Password: ${adminPassword}`);
-    console.log(`Role:     ${admin.role}`);
+    console.log(`[Seed Success] Admin account prepared for: ${adminEmail} (Role: ${admin.role})`);
 
     await mongoose.disconnect();
     process.exit(0);

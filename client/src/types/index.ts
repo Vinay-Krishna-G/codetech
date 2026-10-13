@@ -78,7 +78,7 @@ export interface DashboardStats {
 
 export interface VerifyResponse {
   success: boolean;
-  status: 'valid' | 'revoked' | 'not_found' | 'invalid_query';
+  status: 'valid' | 'revoked' | 'not_found' | 'invalid_query' | 'error';
   message: string;
   certificate?: Certificate;
   searchedId?: string;

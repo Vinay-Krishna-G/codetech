@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/server.js",
     "seed:admin": "tsx src/scripts/seedAdmin.ts",
+    "admin:init": "tsx src/scripts/initAdmin.ts",
     "seed:demo": "tsx src/scripts/seedDemo.ts",
     "test": "vitest run"
   },

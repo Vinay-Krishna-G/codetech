@@ -15,6 +15,7 @@
     "test:server": "npm --prefix server test",
     "test": "npm run test:server",
     "seed:admin": "npm --prefix server run seed:admin",
+    "admin:init": "npm --prefix server run admin:init",
     "seed:demo": "npm --prefix server run seed:demo"
   }
 }

@@ -17,17 +17,34 @@ describe('CertiVerify Full-Stack Backend Integration Tests', () => {
     // Clean up test fixtures if present
     await User.deleteMany({ email: 'testadmin@certiverify.com' });
     await Certificate.deleteMany({
-      certificateId: { $in: [testCertId, 'TEST-DUP-001', 'TEST-REVOKE-001'] },
+      certificateId: { $in: [testCertId, 'TEST-DUP-001', 'TEST-REVOKE-001', 'DC6E30F05C735E02'] },
     });
 
     // Create test admin
     const passwordHash = await bcrypt.hash('AdminTest@123', 10);
-    await User.create({
+    const testAdmin = await User.create({
       name: 'Test Administrator',
       email: 'testadmin@certiverify.com',
       passwordHash,
       role: 'superadmin',
       active: true,
+    });
+
+    // Create test certificate fixture for verification endpoint test
+    await Certificate.create({
+      certificateId: 'DC6E30F05C735E02',
+      recipientName: 'Bellamkonda Jagadeesh',
+      recipientEmail: 'jagadeesh.b@example.com',
+      certificateType: 'Internship Experience',
+      achievementTitle: 'Data Analytics',
+      domain: 'Data Analytics',
+      duration: '6 Weeks',
+      issuingOrganization: 'CODTECH IT SOLUTIONS PRIVATE LIMITED',
+      completionDate: new Date('2026-07-30'),
+      issueDate: new Date('2026-07-30'),
+      grade: 'Successfully Completed',
+      status: 'valid',
+      issuedBy: testAdmin._id,
     });
   });
 
@@ -35,7 +52,7 @@ describe('CertiVerify Full-Stack Backend Integration Tests', () => {
     // Clean up test data
     await User.deleteMany({ email: 'testadmin@certiverify.com' });
     await Certificate.deleteMany({
-      certificateId: { $in: [testCertId, 'TEST-DUP-001', 'TEST-REVOKE-001'] },
+      certificateId: { $in: [testCertId, 'TEST-DUP-001', 'TEST-REVOKE-001', 'DC6E30F05C735E02'] },
     });
     await mongoose.disconnect();
   });

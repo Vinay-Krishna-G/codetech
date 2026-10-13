@@ -7,13 +7,20 @@ export const verifyService = {
       const res = await api.get(`/verify/${certificateId}`);
       return res.data;
     } catch (error: any) {
-      if (error.response?.data) {
-        return error.response.data as VerifyResponse;
+      if (error.response?.data && typeof error.response.data === 'object') {
+        const resData = error.response.data;
+        return {
+          success: false,
+          status: resData.status || (error.response.status === 404 ? 'not_found' : 'error'),
+          message: resData.message || (error.response.status === 404 ? 'Certificate not found in registry.' : 'Could not connect to the verification registry.'),
+          searchedId: resData.searchedId || certificateId,
+        };
       }
       return {
         success: false,
-        status: 'not_found',
-        message: 'Could not connect to verification server or certificate was not found.',
+        status: error.response?.status === 404 ? 'not_found' : 'error',
+        message: 'Could not connect to the verification registry. Please check your network connection.',
+        searchedId: certificateId,
       };
     }
   },
