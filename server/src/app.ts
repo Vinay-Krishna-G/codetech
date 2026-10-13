@@ -25,6 +25,7 @@ const allowedOrigins = [
   'http://127.0.0.1:5173',
   'http://localhost:3000',
   'http://localhost:5000',
+  'http://localhost:5001',
 ];
 
 app.use(
@@ -53,7 +54,11 @@ app.use(express.urlencoded({ extended: true, limit: '1mb' }));
 app.use(cookieParser());
 
 // Auto-connect database for serverless requests
-app.use(async (_req: Request, _res: Response, next: NextFunction) => {
+app.use(async (req: Request, _res: Response, next: NextFunction) => {
+  // Allow health check to succeed even if database is connecting/unavailable
+  if (req.path === '/health' || req.originalUrl === '/api/health') {
+    return next();
+  }
   try {
     await connectDB();
     next();
@@ -81,14 +86,14 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
-// API Routes
-app.use('/api', apiRoutes);
+// API Routes (mounted on both '/api' and '/' to handle rewrite path variations in serverless environments)
+app.use(['/api', '/'], apiRoutes);
 
 // 404 Handler for undefined API routes
-app.use('/api/*', (req: Request, res: Response) => {
+app.use((req: Request, res: Response) => {
   res.status(404).json({
     success: false,
-    message: `API endpoint '${req.originalUrl}' not found.`,
+    message: `API endpoint '${req.originalUrl || req.url}' not found.`,
   });
 });
 

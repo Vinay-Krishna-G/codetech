@@ -14,6 +14,21 @@ const startServer = async () => {
       console.log(`===============================================`);
     });
 
+    server.on('error', (error: NodeJS.ErrnoException) => {
+      if (error.code === 'EADDRINUSE') {
+        console.error(`\n[Server Error] Port ${env.PORT} is already in use.`);
+        if (env.PORT === 5000) {
+          console.error(`On macOS, port 5000 is occupied by Apple's AirPlay Receiver (Control Center).`);
+          console.error(`To free port 5000:`);
+          console.error(`  Open macOS System Settings > General > AirDrop & AirPlay > Toggle off "AirPlay Receiver".`);
+          console.error(`Alternatively, set PORT in your .env file.\n`);
+        }
+      } else {
+        console.error('Server error:', error.message);
+      }
+      process.exit(1);
+    });
+
     // Graceful shutdown handling
     const shutdown = () => {
       console.log('Shutting down gracefully...');

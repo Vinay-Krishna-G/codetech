@@ -5,17 +5,32 @@ import { fileURLToPath } from 'url';
 import { ICertificate } from '../models/Certificate.js';
 import { QRService } from './qrService.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+const getDirname = (): string => {
+  try {
+    if (typeof import.meta !== 'undefined' && import.meta?.url) {
+      return path.dirname(fileURLToPath(import.meta.url));
+    }
+  } catch {
+    // fallback for bundled environments
+  }
+  return typeof __dirname !== 'undefined' ? __dirname : process.cwd();
+};
 
 const resolveAssetPath = (filename: string): string => {
-  const primaryPath = path.resolve(process.cwd(), 'assets', filename);
-  if (fs.existsSync(primaryPath)) return primaryPath;
-  const secondaryPath = path.resolve(__dirname, '../../assets', filename);
-  if (fs.existsSync(secondaryPath)) return secondaryPath;
-  const clientPath = path.resolve(process.cwd(), '../client/public/assets', filename);
-  if (fs.existsSync(clientPath)) return clientPath;
-  return primaryPath;
+  const currentDir = getDirname();
+  const candidates = [
+    path.resolve(process.cwd(), 'assets', filename),
+    path.resolve(process.cwd(), 'server', 'assets', filename),
+    path.resolve(currentDir, '../../assets', filename),
+    path.resolve(currentDir, '../assets', filename),
+    path.resolve(process.cwd(), 'client', 'public', 'assets', filename),
+    path.resolve(process.cwd(), '../client', 'public', 'assets', filename),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  return candidates[0];
 };
 
 export class PDFService {

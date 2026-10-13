@@ -186,9 +186,11 @@ git push -u origin main
 1. Open the [Vercel Dashboard](https://vercel.com/new) and click **"Add New Project"**.
 2. Select and import your GitHub repository.
 3. Configure **Environment Variables** in the Vercel project settings:
-   - `MONGODB_URI`: `mongodb+srv://saipraveenabburi7_db_user:MyEz5CrDVhuM3wsm@cluster0.tggnzrj.mongodb.net/certiverify?retryWrites=true&w=majority&appName=Cluster0`
-   - `JWT_SECRET`: `super_secure_certiverify_jwt_secret_change_in_production_2026`
+   - `MONGODB_URI`: `mongodb+srv://<username>:<password>@<cluster-address>/certiverify?retryWrites=true&w=majority`
+   - `JWT_SECRET`: `<generate-a-strong-random-secret>`
    - `NODE_ENV`: `production`
+   - `APP_URL`: `https://your-vercel-domain.vercel.app`
+   - `CLIENT_URL`: `https://your-vercel-domain.vercel.app`
 4. Click **Deploy**.
    - Vercel automatically builds the frontend to `client/dist` and routes `/api/*` to the serverless function in `api/index.ts`.
    - Client-side routes (e.g. `/verify/:id`, `/admin`) are automatically routed to `index.html` via `vercel.json`.
