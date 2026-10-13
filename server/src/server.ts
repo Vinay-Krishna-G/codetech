@@ -46,6 +46,10 @@ const startServer = async () => {
   }
 };
 
-startServer();
+// Only start standalone HTTP server in local development or standalone container environments.
+// On Vercel, requests are handled directly by the exported Express app without app.listen().
+if (!process.env.VERCEL) {
+  startServer();
+}
 
 export default app;

@@ -31,16 +31,20 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps, curl, postman)
+      // Allow requests with no origin (like mobile apps, curl, postman, same-origin)
       if (!origin) return callback(null, true);
       if (
         allowedOrigins.indexOf(origin) !== -1 ||
         origin.endsWith('.vercel.app') ||
+        origin.includes('.vercel.app') ||
+        origin === env.APP_URL ||
+        origin === env.CLIENT_URL ||
         process.env.NODE_ENV !== 'production'
       ) {
         return callback(null, true);
       }
-      callback(new Error('Blocked by CORS policy'));
+      // Deny without throwing an unhandled 500 error
+      callback(null, false);
     },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -59,6 +63,15 @@ app.use(async (req: Request, _res: Response, next: NextFunction) => {
   if (req.path === '/health' || req.originalUrl === '/api/health') {
     return next();
   }
+
+  // Fast-path: Unauthenticated /auth/me without token can be rejected by authenticateJwt immediately
+  // without waiting for or failing on database connection
+  const isAuthMe = req.path === '/auth/me' || req.originalUrl === '/api/auth/me' || req.path === '/api/auth/me';
+  const hasToken = Boolean(req.cookies?.token || req.headers.authorization);
+  if (isAuthMe && !hasToken) {
+    return next();
+  }
+
   try {
     await connectDB();
     next();

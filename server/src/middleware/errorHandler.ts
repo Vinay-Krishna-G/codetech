@@ -28,6 +28,19 @@ export const errorHandler = (
     return;
   }
 
+  // Handle MongoDB Atlas connection / IP whitelist error
+  if (
+    err.name === 'MongooseServerSelectionError' ||
+    err.message?.includes('whitelist') ||
+    err.message?.includes('Could not connect to any servers')
+  ) {
+    res.status(503).json({
+      success: false,
+      message: 'Could not connect to MongoDB Atlas cluster. Please ensure that Network Access in MongoDB Atlas allows access from anywhere (0.0.0.0/0) for Vercel.',
+    });
+    return;
+  }
+
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Internal Server Error';
 

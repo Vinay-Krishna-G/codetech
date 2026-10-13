@@ -14,17 +14,17 @@ export const connectDB = async (): Promise<void> => {
     return;
   }
 
-  // 2. Detect unconfigured placeholder connection string
-  if (env.MONGODB_URI.includes('PASTE_MY_NEW_MONGODB_ATLAS_CONNECTION_STRING_HERE')) {
+  // 2. Detect missing or placeholder connection string
+  if (!env.MONGODB_URI || env.MONGODB_URI.includes('PASTE_MY_NEW_MONGODB_ATLAS_CONNECTION_STRING_HERE')) {
     throw new Error(
-      '[Database Error] MONGODB_URI contains placeholder "PASTE_MY_NEW_MONGODB_ATLAS_CONNECTION_STRING_HERE". Please paste your real MongoDB Atlas connection string in .env.'
+      '[Database Error] MONGODB_URI environment variable is not configured. Please add your MongoDB Atlas connection string in Vercel project settings.'
     );
   }
 
   // 3. Reuse in-flight connection promise to avoid parallel connections in serverless cold starts
   if (!cachedPromise) {
     cachedPromise = mongoose.connect(env.MONGODB_URI, {
-      serverSelectionTimeoutMS: 5000, // Fail fast in 5 seconds rather than hanging serverless requests for 30s
+      serverSelectionTimeoutMS: 10000, // 10s timeout for serverless Atlas connection handshakes
     });
   }
 
