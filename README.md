@@ -192,8 +192,8 @@ git push -u origin main
    - `APP_URL`: `https://your-vercel-domain.vercel.app`
    - `CLIENT_URL`: `https://your-vercel-domain.vercel.app`
 4. Click **Deploy**.
-   - Vercel automatically builds the frontend to `client/dist` and routes `/api/*` to the serverless function in `api/index.ts`.
-   - Client-side routes (e.g. `/verify/:id`, `/admin`) are automatically routed to `index.html` via `vercel.json`.
+   - Vercel automatically coordinates the frontend service (`client/`) and backend Express service (`server/`) under a single shared domain using the Vercel Services configuration in `vercel.json`.
+   - Client-side routes (e.g. `/verify/:id`, `/admin`) are served by the frontend service, while `/api` and `/api/*` route to the backend Express service.
 
 ---
 
