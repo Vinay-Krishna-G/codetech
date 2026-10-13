@@ -60,7 +60,14 @@ app.use(cookieParser());
 // Auto-connect database for serverless requests
 app.use(async (req: Request, _res: Response, next: NextFunction) => {
   // Allow health check to succeed even if database is connecting/unavailable
-  if (req.path === '/health' || req.originalUrl === '/api/health') {
+  const isHealthCheck =
+    req.path === '/health' ||
+    req.path === '/api/health' ||
+    req.url === '/health' ||
+    req.url === '/api/health' ||
+    req.originalUrl?.startsWith('/api/health') ||
+    req.originalUrl?.startsWith('/health');
+  if (isHealthCheck) {
     return next();
   }
 

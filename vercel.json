@@ -2,13 +2,20 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "services": {
     "frontend": {
-      "root": "client/"
+      "root": "client/",
+      "rewrites": [
+        {
+          "source": "/(.*)",
+          "destination": "/index.html"
+        }
+      ]
     },
     "backend": {
       "root": "server/",
-      "entrypoint": "src/server.ts",
+      "buildCommand": "npm run build",
+      "entrypoint": "dist/server.js",
       "functions": {
-        "src/server.ts": {
+        "dist/server.js": {
           "includeFiles": "assets/**"
         }
       }
